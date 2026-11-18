@@ -10,7 +10,7 @@ O robô coleta avisos sobre golpes em fontes confiáveis, valida e filtra o cont
 | --- | --- |
 | 🎥 **Vídeo demonstrativo** | https://youtu.be/1oUd6ioEMkQ |
 | 📂 **Repositório** | https://github.com/LivNS/Conecta-60-RPA |
-| 📄 **Relatório técnico** | [`rpa/docs/relatorio/Relatório Técnico de RPA — Conecta 60+.pdf`](rpa/docs/relatorio/Relatório Técnico de RPA — Conecta 60+.pdf) |
+| 📄 **Relatório técnico** | [`rpa/docs/relatorio/relatorio`](rpa/docs/relatorio/relatorio) |
 | 🗺️ **Fluxo BPMN** | [`rpa/docs/fluxo-rpa-alertas.bpmn`](rpa/docs/fluxo-rpa-alertas.bpmn) |
 
 ## Integrantes
