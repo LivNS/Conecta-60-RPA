@@ -1,0 +1,19 @@
+{
+  "_aviso": "DADOS FICTÍCIOS para a demonstração de falha e reenvio no vídeo.",
+  "itens": [
+    {
+      "titulo": "Falso técnico liga oferecendo suporte e pede para instalar aplicativo de acesso remoto",
+      "link": "https://alertas.exemplo.org/2026/11/falso-suporte-acesso-remoto",
+      "data": "2026-11-16",
+      "orgao": "Observatório Fictício de Fraudes",
+      "resumo": "O golpista diz ser do suporte da operadora e pede para instalar um aplicativo. Com ele, controla o celular e acessa o aplicativo do banco."
+    },
+    {
+      "titulo": "Mensagem de sorteio diz que você ganhou prêmio e cobra taxa para liberar",
+      "link": "https://alertas.exemplo.org/2026/11/sorteio-taxa",
+      "data": "2026-11-16",
+      "orgao": "Observatório Fictício de Fraudes",
+      "resumo": "A vítima recebe aviso de prêmio em um sorteio do qual nunca participou e é orientada a pagar uma taxa por Pix para receber o valor."
+    }
+  ]
+}

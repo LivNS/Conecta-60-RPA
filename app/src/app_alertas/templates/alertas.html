@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Alertas de golpes · {{ app_nome }}{% endblock %}
+{% block conteudo %}
+<h1>Alertas de golpes</h1>
+<p class="lead">Golpes que estão circulando. Cada aviso foi conferido por uma pessoa antes de aparecer aqui.</p>
+
+{% for a in alertas %}
+<article class="cartao" aria-labelledby="t-{{ a.id }}">
+  <span class="etiqueta">{{ a.tema_rotulo }}</span>
+  <h2 id="t-{{ a.id }}">{{ a.titulo }}</h2>
+  {% if a.data_publicacao %}<p class="data">Publicado em {{ a.data_publicacao[8:10] }}/{{ a.data_publicacao[5:7] }}/{{ a.data_publicacao[0:4] }}</p>{% endif %}
+  <p>{{ a.resumo_simples }}</p>
+  <section class="protecao" aria-label="Como se proteger">
+    <h3>Como se proteger</h3>
+    <ul>{% for d in a.como_se_proteger %}<li>{{ d }}</li>{% endfor %}</ul>
+  </section>
+  <p class="fonte">Fonte: {{ a.fonte_nome }}</p>
+</article>
+{% else %}
+<p class="vazio">Nenhum alerta publicado ainda.</p>
+{% endfor %}
+
+<a class="botao secundario" href="/">Voltar ao início</a>
+{% endblock %}

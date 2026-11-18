@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_RPA" targetNamespace="http://gs-fiap-2026/rpa-alertas" exporter="gerar_bpmn.py" exporterVersion="1.0">
+<bpmn:collaboration id="Colaboracao">
+<bpmn:participant id="Pool_Robo" name="Robô RPA de alertas (Python)" processRef="Processo_Robo"/>
+<bpmn:participant id="Pool_Revisao" name="MVP: revisão humana e publicação" processRef="Processo_Revisao"/>
+<bpmn:messageFlow id="MF_Rascunho" name="POST /api/alertas/rascunhos" sourceRef="T_Enviar" targetRef="R_Inicio"/>
+</bpmn:collaboration>
+<bpmn:process id="Processo_Robo" isExecutable="false">
+<bpmn:startEvent id="Inicio" name="Agendamento diário (06h17)"><bpmn:timerEventDefinition id="TimerDiario"><bpmn:timeCycle>0 17 6 * * ?</bpmn:timeCycle></bpmn:timerEventDefinition></bpmn:startEvent>
+<bpmn:task id="T_Config" name="Carregar configuração e fontes permitidas"/>
+<bpmn:task id="T_Fila" name="Reenviar rascunhos da fila pendente"/>
+<bpmn:subProcess id="SP_Fontes" name="Para cada fonte ativa"><bpmn:multiInstanceLoopCharacteristics isSequential="true"/>
+<bpmn:startEvent id="IniFonte" name=""/>
+<bpmn:task id="T_Coletar" name="Coletar fonte (timeout, até 3 tentativas)"/>
+<bpmn:exclusiveGateway id="G_Respondeu" name="Fonte respondeu?"/>
+<bpmn:task id="T_FonteFalha" name="Registrar fonte indisponível ou inválida"/>
+<bpmn:endEvent id="FimFonteFalha" name="Segue para a próxima fonte"/>
+<bpmn:subProcess id="SP_Itens" name="Para cada item coletado"><bpmn:multiInstanceLoopCharacteristics isSequential="true"/>
+<bpmn:startEvent id="IniItem" name=""/>
+<bpmn:task id="T_Validar" name="Validar título, link, data e origem"/>
+<bpmn:exclusiveGateway id="G_Valido" name="Item válido?"/>
+<bpmn:task id="T_Quarentena" name="Mover para quarentena com motivo"/>
+<bpmn:endEvent id="FimQuarentena" name="Item barrado"/>
+<bpmn:exclusiveGateway id="G_Duplicado" name="Já processado (hash)?"/>
+<bpmn:task id="T_Duplicado" name="Registrar duplicado e ignorar"/>
+<bpmn:endEvent id="FimDuplicado" name="Item ignorado"/>
+<bpmn:task id="T_Classificar" name="Classificar tema por palavras-chave"/>
+<bpmn:exclusiveGateway id="G_Tema" name="Tema reconhecido?"/>
+<bpmn:task id="T_RevisarTema" name="Marcar &quot;revisar tema&quot;"/>
+<bpmn:task id="T_Rascunho" name="Montar rascunho educativo em linguagem simples"/>
+<bpmn:sendTask id="T_Enviar" name="Enviar rascunho à API do MVP (token)"/>
+<bpmn:exclusiveGateway id="G_Aceito" name="Entrega aceita?"/>
+<bpmn:task id="T_FilaReenvio" name="Guardar na fila de reenvio"/>
+<bpmn:endEvent id="FimFila" name="Reenvio na próxima execução"/>
+<bpmn:endEvent id="FimItem" name="Rascunho pendente de revisão"/>
+<bpmn:sequenceFlow id="f_i1" sourceRef="IniItem" targetRef="T_Validar"/>
+<bpmn:sequenceFlow id="f_i2" sourceRef="T_Validar" targetRef="G_Valido"/>
+<bpmn:sequenceFlow id="f_i3" sourceRef="G_Valido" targetRef="T_Quarentena" name="não"/>
+<bpmn:sequenceFlow id="f_i4" sourceRef="T_Quarentena" targetRef="FimQuarentena"/>
+<bpmn:sequenceFlow id="f_i5" sourceRef="G_Valido" targetRef="G_Duplicado" name="sim"/>
+<bpmn:sequenceFlow id="f_i6" sourceRef="G_Duplicado" targetRef="T_Duplicado" name="sim"/>
+<bpmn:sequenceFlow id="f_i7" sourceRef="T_Duplicado" targetRef="FimDuplicado"/>
+<bpmn:sequenceFlow id="f_i8" sourceRef="G_Duplicado" targetRef="T_Classificar" name="não"/>
+<bpmn:sequenceFlow id="f_i9" sourceRef="T_Classificar" targetRef="G_Tema"/>
+<bpmn:sequenceFlow id="f_i10" sourceRef="G_Tema" targetRef="T_RevisarTema" name="não"/>
+<bpmn:sequenceFlow id="f_i11" sourceRef="T_RevisarTema" targetRef="T_Rascunho"/>
+<bpmn:sequenceFlow id="f_i12" sourceRef="G_Tema" targetRef="T_Rascunho" name="sim"/>
+<bpmn:sequenceFlow id="f_i13" sourceRef="T_Rascunho" targetRef="T_Enviar"/>
+<bpmn:sequenceFlow id="f_i14" sourceRef="T_Enviar" targetRef="G_Aceito"/>
+<bpmn:sequenceFlow id="f_i15" sourceRef="G_Aceito" targetRef="T_FilaReenvio" name="não"/>
+<bpmn:sequenceFlow id="f_i16" sourceRef="T_FilaReenvio" targetRef="FimFila"/>
+<bpmn:sequenceFlow id="f_i17" sourceRef="G_Aceito" targetRef="FimItem" name="sim"/>
+</bpmn:subProcess>
+<bpmn:endEvent id="FimFonte" name="Fonte concluída"/>
+<bpmn:sequenceFlow id="f_f1" sourceRef="IniFonte" targetRef="T_Coletar"/>
+<bpmn:sequenceFlow id="f_f2" sourceRef="T_Coletar" targetRef="G_Respondeu"/>
+<bpmn:sequenceFlow id="f_f3" sourceRef="G_Respondeu" targetRef="T_FonteFalha" name="não"/>
+<bpmn:sequenceFlow id="f_f4" sourceRef="T_FonteFalha" targetRef="FimFonteFalha"/>
+<bpmn:sequenceFlow id="f_f5" sourceRef="G_Respondeu" targetRef="SP_Itens" name="sim"/>
+<bpmn:sequenceFlow id="f_f6" sourceRef="SP_Itens" targetRef="FimFonte"/>
+</bpmn:subProcess>
+<bpmn:task id="T_Resumo" name="Gravar resumo, logs JSONL e estado"/>
+<bpmn:endEvent id="Fim" name="Execução concluída"/>
+<bpmn:sequenceFlow id="f_1" sourceRef="Inicio" targetRef="T_Config"/>
+<bpmn:sequenceFlow id="f_2" sourceRef="T_Config" targetRef="T_Fila"/>
+<bpmn:sequenceFlow id="f_3" sourceRef="T_Fila" targetRef="SP_Fontes"/>
+<bpmn:sequenceFlow id="f_4" sourceRef="SP_Fontes" targetRef="T_Resumo"/>
+<bpmn:sequenceFlow id="f_5" sourceRef="T_Resumo" targetRef="Fim"/>
+</bpmn:process>
+<bpmn:process id="Processo_Revisao" isExecutable="false">
+<bpmn:startEvent id="R_Inicio" name="Rascunho recebido"><bpmn:messageEventDefinition id="MsgRascunho"/></bpmn:startEvent>
+<bpmn:userTask id="R_Revisar" name="Revisor confere o rascunho na tela de revisão"/>
+<bpmn:exclusiveGateway id="R_Aprova" name="Aprovado?"/>
+<bpmn:task id="R_Publicar" name="Publicar em &quot;Alertas&quot; no app"/>
+<bpmn:endEvent id="R_FimPub" name="Alerta visível para o cidadão"/>
+<bpmn:task id="R_Rejeitar" name="Rejeitar com motivo"/>
+<bpmn:endEvent id="R_FimRej" name="Não publicado"/>
+<bpmn:sequenceFlow id="r1" sourceRef="R_Inicio" targetRef="R_Revisar"/>
+<bpmn:sequenceFlow id="r2" sourceRef="R_Revisar" targetRef="R_Aprova"/>
+<bpmn:sequenceFlow id="r3" sourceRef="R_Aprova" targetRef="R_Publicar" name="sim"/>
+<bpmn:sequenceFlow id="r4" sourceRef="R_Aprova" targetRef="R_Rejeitar" name="não"/>
+<bpmn:sequenceFlow id="r5" sourceRef="R_Publicar" targetRef="R_FimPub"/>
+<bpmn:sequenceFlow id="r6" sourceRef="R_Rejeitar" targetRef="R_FimRej"/>
+</bpmn:process>
+<bpmndi:BPMNDiagram id="Diagrama"><bpmndi:BPMNPlane id="Plano" bpmnElement="Colaboracao">
+<bpmndi:BPMNShape id="Pool_Robo_di" bpmnElement="Pool_Robo" isHorizontal="true"><dc:Bounds x="0" y="0" width="2520" height="570"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Pool_Revisao_di" bpmnElement="Pool_Revisao" isHorizontal="true"><dc:Bounds x="0" y="610" width="2520" height="240"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio"><dc:Bounds x="80" y="242" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Config_di" bpmnElement="T_Config"><dc:Bounds x="160" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Fila_di" bpmnElement="T_Fila"><dc:Bounds x="320" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="SP_Fontes_di" bpmnElement="SP_Fontes" isExpanded="true"><dc:Bounds x="480" y="40" width="1740" height="490"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="IniFonte_di" bpmnElement="IniFonte"><dc:Bounds x="500" y="242" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Coletar_di" bpmnElement="T_Coletar"><dc:Bounds x="570" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G_Respondeu_di" bpmnElement="G_Respondeu"><dc:Bounds x="730" y="235" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_FonteFalha_di" bpmnElement="T_FonteFalha"><dc:Bounds x="705" y="330" width="100" height="70"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="FimFonteFalha_di" bpmnElement="FimFonteFalha"><dc:Bounds x="737" y="424" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="SP_Itens_di" bpmnElement="SP_Itens" isExpanded="true"><dc:Bounds x="830" y="60" width="1240" height="440"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="IniItem_di" bpmnElement="IniItem"><dc:Bounds x="850" y="242" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Validar_di" bpmnElement="T_Validar"><dc:Bounds x="910" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G_Valido_di" bpmnElement="G_Valido"><dc:Bounds x="1070" y="235" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Quarentena_di" bpmnElement="T_Quarentena"><dc:Bounds x="1045" y="330" width="100" height="70"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="FimQuarentena_di" bpmnElement="FimQuarentena"><dc:Bounds x="1077" y="424" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G_Duplicado_di" bpmnElement="G_Duplicado"><dc:Bounds x="1200" y="235" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Duplicado_di" bpmnElement="T_Duplicado"><dc:Bounds x="1175" y="330" width="100" height="70"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="FimDuplicado_di" bpmnElement="FimDuplicado"><dc:Bounds x="1207" y="424" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Classificar_di" bpmnElement="T_Classificar"><dc:Bounds x="1300" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G_Tema_di" bpmnElement="G_Tema"><dc:Bounds x="1460" y="235" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_RevisarTema_di" bpmnElement="T_RevisarTema"><dc:Bounds x="1435" y="90" width="100" height="70"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Rascunho_di" bpmnElement="T_Rascunho"><dc:Bounds x="1560" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Enviar_di" bpmnElement="T_Enviar"><dc:Bounds x="1710" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G_Aceito_di" bpmnElement="G_Aceito"><dc:Bounds x="1860" y="235" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_FilaReenvio_di" bpmnElement="T_FilaReenvio"><dc:Bounds x="1835" y="330" width="100" height="70"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="FimFila_di" bpmnElement="FimFila"><dc:Bounds x="1867" y="424" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="FimItem_di" bpmnElement="FimItem"><dc:Bounds x="1990" y="242" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="FimFonte_di" bpmnElement="FimFonte"><dc:Bounds x="2130" y="242" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="T_Resumo_di" bpmnElement="T_Resumo"><dc:Bounds x="2260" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Fim_di" bpmnElement="Fim"><dc:Bounds x="2420" y="242" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_Inicio_di" bpmnElement="R_Inicio"><dc:Bounds x="1752" y="692" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_Revisar_di" bpmnElement="R_Revisar"><dc:Bounds x="1850" y="670" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_Aprova_di" bpmnElement="R_Aprova"><dc:Bounds x="2010" y="685" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_Publicar_di" bpmnElement="R_Publicar"><dc:Bounds x="2100" y="625" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_FimPub_di" bpmnElement="R_FimPub"><dc:Bounds x="2270" y="647" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_Rejeitar_di" bpmnElement="R_Rejeitar"><dc:Bounds x="2100" y="730" width="120" height="80"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="R_FimRej_di" bpmnElement="R_FimRej"><dc:Bounds x="2270" y="752" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNEdge id="f_i1_di" bpmnElement="f_i1"><di:waypoint x="886" y="260"/><di:waypoint x="910" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i2_di" bpmnElement="f_i2"><di:waypoint x="1030" y="260"/><di:waypoint x="1070" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i3_di" bpmnElement="f_i3"><di:waypoint x="1095" y="285"/><di:waypoint x="1095" y="330"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i4_di" bpmnElement="f_i4"><di:waypoint x="1095" y="400"/><di:waypoint x="1095" y="424"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i5_di" bpmnElement="f_i5"><di:waypoint x="1120" y="260"/><di:waypoint x="1200" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i6_di" bpmnElement="f_i6"><di:waypoint x="1225" y="285"/><di:waypoint x="1225" y="330"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i7_di" bpmnElement="f_i7"><di:waypoint x="1225" y="400"/><di:waypoint x="1225" y="424"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i8_di" bpmnElement="f_i8"><di:waypoint x="1250" y="260"/><di:waypoint x="1300" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i9_di" bpmnElement="f_i9"><di:waypoint x="1420" y="260"/><di:waypoint x="1460" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i10_di" bpmnElement="f_i10"><di:waypoint x="1485" y="235"/><di:waypoint x="1485" y="160"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i11_di" bpmnElement="f_i11"><di:waypoint x="1535" y="125"/><di:waypoint x="1620" y="125"/><di:waypoint x="1620" y="220"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i12_di" bpmnElement="f_i12"><di:waypoint x="1510" y="260"/><di:waypoint x="1560" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i13_di" bpmnElement="f_i13"><di:waypoint x="1680" y="260"/><di:waypoint x="1710" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i14_di" bpmnElement="f_i14"><di:waypoint x="1830" y="260"/><di:waypoint x="1860" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i15_di" bpmnElement="f_i15"><di:waypoint x="1885" y="285"/><di:waypoint x="1885" y="330"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i16_di" bpmnElement="f_i16"><di:waypoint x="1885" y="400"/><di:waypoint x="1885" y="424"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_i17_di" bpmnElement="f_i17"><di:waypoint x="1910" y="260"/><di:waypoint x="1990" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_f1_di" bpmnElement="f_f1"><di:waypoint x="536" y="260"/><di:waypoint x="570" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_f2_di" bpmnElement="f_f2"><di:waypoint x="690" y="260"/><di:waypoint x="730" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_f3_di" bpmnElement="f_f3"><di:waypoint x="755" y="285"/><di:waypoint x="755" y="330"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_f4_di" bpmnElement="f_f4"><di:waypoint x="755" y="400"/><di:waypoint x="755" y="424"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_f5_di" bpmnElement="f_f5"><di:waypoint x="780" y="260"/><di:waypoint x="830" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_f6_di" bpmnElement="f_f6"><di:waypoint x="2070" y="260"/><di:waypoint x="2130" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_1_di" bpmnElement="f_1"><di:waypoint x="116" y="260"/><di:waypoint x="160" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_2_di" bpmnElement="f_2"><di:waypoint x="280" y="260"/><di:waypoint x="320" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_3_di" bpmnElement="f_3"><di:waypoint x="440" y="260"/><di:waypoint x="480" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_4_di" bpmnElement="f_4"><di:waypoint x="2220" y="260"/><di:waypoint x="2260" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f_5_di" bpmnElement="f_5"><di:waypoint x="2380" y="260"/><di:waypoint x="2420" y="260"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="r1_di" bpmnElement="r1"><di:waypoint x="1788" y="710"/><di:waypoint x="1850" y="710"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="r2_di" bpmnElement="r2"><di:waypoint x="1970" y="710"/><di:waypoint x="2010" y="710"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="r3_di" bpmnElement="r3"><di:waypoint x="2035" y="685"/><di:waypoint x="2035" y="665"/><di:waypoint x="2100" y="665"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="r4_di" bpmnElement="r4"><di:waypoint x="2035" y="735"/><di:waypoint x="2035" y="770"/><di:waypoint x="2100" y="770"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="r5_di" bpmnElement="r5"><di:waypoint x="2220" y="665"/><di:waypoint x="2270" y="665"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="r6_di" bpmnElement="r6"><di:waypoint x="2220" y="770"/><di:waypoint x="2270" y="770"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="MF_Rascunho_di" bpmnElement="MF_Rascunho"><di:waypoint x="1770" y="300"/><di:waypoint x="1770" y="590"/><di:waypoint x="1770" y="590"/><di:waypoint x="1770" y="692"/></bpmndi:BPMNEdge>
+</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>

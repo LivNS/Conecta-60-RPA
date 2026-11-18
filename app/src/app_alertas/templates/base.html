@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}{{ app_nome }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <header class="topo"><a href="/">{{ app_nome }}</a></header>
+  <main id="conteudo">
+    {% block conteudo %}{% endblock %}
+  </main>
+  <footer>
+    {{ app_nome }} orienta e ensina; não substitui seu banco nem as autoridades.
+    Na dúvida, confirme sempre pelo canal oficial.
+  </footer>
+</body>
+</html>

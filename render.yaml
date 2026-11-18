@@ -1,0 +1,20 @@
+# Publicação provisória do MVP no Render (plano gratuito).
+# No painel do Render: New > Blueprint > escolher este repositório.
+services:
+  - type: web
+    name: conecta60-mvp
+    runtime: docker
+    plan: free
+    dockerfilePath: ./app/Dockerfile
+    dockerContext: ./app
+    healthCheckPath: /saude
+    autoDeploy: true
+    envVars:
+      - key: APP_NOME
+        value: Conecta 60+
+      - key: ADMIN_USUARIO
+        value: revisor
+      - key: ADMIN_SENHA          # gerada pelo Render; copie no painel (Environment)
+        generateValue: true
+      - key: RPA_API_TOKEN        # gerado pelo Render; copie para o segredo RPA_API_TOKEN do GitHub
+        generateValue: true

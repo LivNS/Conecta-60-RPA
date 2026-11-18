@@ -1,0 +1,8 @@
+logs/execucao_*.jsonl
+logs/resumo_*.json
+estado/
+saida/
+entrada/
+__pycache__/
+*.pyc
+.pytest_cache/

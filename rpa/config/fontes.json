@@ -1,0 +1,51 @@
+{
+  "_comentario": "Lista de fontes permitidas. Só entra item cujo link pertence a um domínio listado na própria fonte.",
+  "modo_entrega": "arquivo",
+  "api_url": "http://localhost:8000",
+  "arquivo_saida": "saida/rascunhos.json",
+  "pastas": {
+    "logs": "logs",
+    "estado": "estado"
+  },
+  "coleta": {
+    "tentativas": 3,
+    "espera_s": 2,
+    "timeout_s": 10
+  },
+  "fontes": [
+    {
+      "id": "agencia-brasil",
+      "nome": "Agência Brasil (EBC)",
+      "tipo": "rss",
+      "local": "https://agenciabrasil.ebc.com.br/feed/ultimasnoticias/feed.xml",
+      "dominios_permitidos": [
+        "agenciabrasil.ebc.com.br"
+      ],
+      "palavras_relevancia": [
+        "golpe",
+        "golpes",
+        "fraude",
+        "fraudes",
+        "estelionato",
+        "phishing",
+        "clonagem",
+        "clonado",
+        "site falso",
+        "perfil falso",
+        "falso funcionario",
+        "falsa central"
+      ],
+      "_nota": "Fonte pública real. A Agência Brasil permite reprodução com crédito (gov.br, serviço 'Acessar notícias em tempo real'). O feed traz todas as notícias; o filtro de relevância deixa passar só as que tratam de golpes."
+    },
+    {
+      "id": "boletins-simulados",
+      "nome": "Boletins simulados (dados fictícios para demonstração)",
+      "tipo": "arquivo",
+      "local": "entrada",
+      "dominios_permitidos": [
+        "alertas.exemplo.org",
+        "seguranca.exemplo.gov.br"
+      ]
+    }
+  ]
+}

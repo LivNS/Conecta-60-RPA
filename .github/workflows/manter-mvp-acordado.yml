@@ -1,0 +1,16 @@
+name: Manter MVP acordado
+
+# O plano gratuito do Render adormece o serviço após 15 min sem acesso.
+# Durante a semana de correção, esta rotina acessa /saude a cada 10 min.
+# Só roda se a variável de repositório MVP_URL estiver preenchida.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    if: ${{ vars.MVP_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl --fail --silent --show-error --max-time 90 "${{ vars.MVP_URL }}/saude"

@@ -1,0 +1,21 @@
+{
+  "execucao": "20261117T004218138665Z",
+  "modo_entrega": "api",
+  "fim": "2026-11-17T00:42:18+00:00",
+  "fontes_ok": 1,
+  "fontes_indisponiveis": 0,
+  "fontes_invalidas": 0,
+  "itens_coletados": 0,
+  "itens_invalidos": 0,
+  "fora_do_tema": 0,
+  "duplicados": 0,
+  "sem_tema": 0,
+  "rascunhos_entregues": 0,
+  "ja_existiam_no_mvp": 0,
+  "na_fila": 0,
+  "reenviados_da_fila": 0,
+  "fila_ainda_pendente": 0,
+  "erros_inesperados": 0,
+  "motivos_invalidos": {},
+  "log": "execucao_20261117T004218138665Z.jsonl"
+}

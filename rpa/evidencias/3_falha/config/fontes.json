@@ -1,0 +1,31 @@
+{
+  "modo_entrega": "api",
+  "api_url": "http://127.0.0.1:40853",
+  "arquivo_saida": "saida/rascunhos.json",
+  "coleta": {
+    "tentativas": 3,
+    "espera_s": 0.5,
+    "timeout_s": 3
+  },
+  "fontes": [
+    {
+      "id": "boletins-simulados",
+      "nome": "Boletins simulados (fictícios)",
+      "tipo": "arquivo",
+      "local": "entrada",
+      "dominios_permitidos": [
+        "alertas.exemplo.org",
+        "seguranca.exemplo.gov.br"
+      ]
+    },
+    {
+      "id": "feed-fora-do-ar",
+      "nome": "Feed que não responde",
+      "tipo": "rss",
+      "local": "http://127.0.0.1:48687/rss",
+      "dominios_permitidos": [
+        "exemplo.org"
+      ]
+    }
+  ]
+}

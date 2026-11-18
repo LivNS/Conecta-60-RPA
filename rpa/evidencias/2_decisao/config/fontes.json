@@ -1,0 +1,22 @@
+{
+  "modo_entrega": "arquivo",
+  "api_url": "",
+  "arquivo_saida": "saida/rascunhos.json",
+  "coleta": {
+    "tentativas": 3,
+    "espera_s": 0.5,
+    "timeout_s": 3
+  },
+  "fontes": [
+    {
+      "id": "boletins-simulados",
+      "nome": "Boletins simulados (fictícios)",
+      "tipo": "arquivo",
+      "local": "entrada",
+      "dominios_permitidos": [
+        "alertas.exemplo.org",
+        "seguranca.exemplo.gov.br"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "execucao": "20261117T004206773386Z",
+  "modo_entrega": "arquivo",
+  "fim": "2026-11-17T00:42:06+00:00",
+  "fontes_ok": 1,
+  "fontes_indisponiveis": 0,
+  "fontes_invalidas": 0,
+  "itens_coletados": 9,
+  "itens_invalidos": 3,
+  "fora_do_tema": 0,
+  "duplicados": 1,
+  "sem_tema": 1,
+  "rascunhos_entregues": 5,
+  "ja_existiam_no_mvp": 0,
+  "na_fila": 0,
+  "reenviados_da_fila": 0,
+  "fila_ainda_pendente": 0,
+  "erros_inesperados": 0,
+  "motivos_invalidos": {
+    "link_ausente": 1,
+    "data_no_futuro": 1,
+    "origem_nao_permitida": 1
+  },
+  "log": "execucao_20261117T004206773386Z.jsonl"
+}

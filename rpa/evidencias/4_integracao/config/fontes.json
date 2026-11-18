@@ -1,0 +1,21 @@
+{
+  "modo_entrega": "api",
+  "api_url": "http://127.0.0.1:55765",
+  "coleta": {
+    "tentativas": 2,
+    "espera_s": 0.2,
+    "timeout_s": 3
+  },
+  "fontes": [
+    {
+      "id": "boletins-simulados",
+      "nome": "Boletins simulados (fictícios)",
+      "tipo": "arquivo",
+      "local": "entrada",
+      "dominios_permitidos": [
+        "alertas.exemplo.org",
+        "seguranca.exemplo.gov.br"
+      ]
+    }
+  ]
+}

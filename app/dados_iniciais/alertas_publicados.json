@@ -1,0 +1,77 @@
+{
+  "_aviso": "Alertas de demonstração (boletins FICTÍCIOS) aprovados na execução de ponta a ponta de 16/11/2026. Carregados só quando o banco está vazio, para a página pública não ficar em branco após reinícios do servidor gratuito.",
+  "alertas": [
+    {
+      "id": "0ad748e293557124",
+      "titulo": "Mensagens falsas avisam que a conta do banco será bloqueada hoje",
+      "tema": "banco_falso",
+      "tema_rotulo": "Falso contato do banco",
+      "resumo_simples": "Criminosos enviam SMS dizendo que a conta bancária será bloqueada e pedem que a pessoa clique em um link para 'regularizar'. O link leva a uma página falsa que pede senha e token.",
+      "como_se_proteger": [
+        "O banco não pede senha, código ou token por mensagem ou ligação.",
+        "Não clique no link. Abra o aplicativo do banco você mesmo.",
+        "Na dúvida, ligue para o número que está atrás do seu cartão."
+      ],
+      "fonte_nome": "Observatório Fictício de Fraudes",
+      "link_fonte": "https://alertas.exemplo.org/2026/11/conta-bloqueada",
+      "data_publicacao": "2026-11-15",
+      "precisa_revisar_tema": false,
+      "origem": "rpa",
+      "criado_em": "2026-11-17T00:42:15+00:00"
+    },
+    {
+      "id": "33370a1760b502e6",
+      "titulo": "Golpe do número novo: falso filho pede Pix urgente pelo WhatsApp",
+      "tema": "pix_parente",
+      "tema_rotulo": "Pedido de dinheiro de falso parente",
+      "resumo_simples": "A vítima recebe mensagem de um número desconhecido: 'Oi mãe, troquei de número'. Depois vem o pedido de transferência por Pix para pagar uma conta atrasada.",
+      "como_se_proteger": [
+        "Desconfie de \"troquei de número\" com pedido de dinheiro.",
+        "Ligue para o número antigo da pessoa antes de fazer qualquer Pix.",
+        "Combine com a família uma palavra-senha para emergências."
+      ],
+      "fonte_nome": "Observatório Fictício de Fraudes",
+      "link_fonte": "https://alertas.exemplo.org/2026/11/numero-novo-pix",
+      "data_publicacao": "2026-11-14",
+      "precisa_revisar_tema": false,
+      "origem": "rpa",
+      "criado_em": "2026-11-17T00:42:15+00:00"
+    },
+    {
+      "id": "b69a33aa9e0b2d94",
+      "titulo": "Página copia site de cartório e cobra certidão",
+      "tema": "outros",
+      "tema_rotulo": "Outros golpes",
+      "resumo_simples": "Sites falsos imitam serviços de registro civil e cobram por certidões que são emitidas de graça ou por valor menor.",
+      "como_se_proteger": [
+        "Desconfie de pressa, ameaça ou oferta boa demais.",
+        "Não clique em links nem passe dados pessoais por mensagem.",
+        "Confirme sempre pelo canal oficial, buscado por você."
+      ],
+      "fonte_nome": "Observatório Fictício de Fraudes",
+      "link_fonte": "https://alertas.exemplo.org/2026/11/cartorio-falso",
+      "data_publicacao": "2026-11-11",
+      "precisa_revisar_tema": false,
+      "origem": "rpa",
+      "criado_em": "2026-11-17T00:42:15+00:00"
+    },
+    {
+      "id": "eeb77949a0abe17b",
+      "titulo": "Golpistas pedem código de verificação para clonar conta de WhatsApp",
+      "tema": "codigo_verificacao",
+      "tema_rotulo": "Pedido de código de verificação",
+      "resumo_simples": "Com a desculpa de confirmar um cadastro, o criminoso pede o código de seis dígitos que chegou por SMS. Com ele, assume a conta de WhatsApp da vítima.",
+      "como_se_proteger": [
+        "Nunca passe códigos que chegam por SMS ou WhatsApp, para ninguém.",
+        "Quem pede esse código quer entrar na sua conta.",
+        "Ative a verificação em duas etapas do WhatsApp."
+      ],
+      "fonte_nome": "Observatório Fictício de Fraudes",
+      "link_fonte": "https://alertas.exemplo.org/2026/11/codigo-verificacao",
+      "data_publicacao": "2026-11-10",
+      "precisa_revisar_tema": false,
+      "origem": "rpa",
+      "criado_em": "2026-11-17T00:42:15+00:00"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block titulo %}Revisão de alertas · {{ app_nome }}{% endblock %}
+{% block conteudo %}
+<h1>Revisão de alertas</h1>
+<p class="lead">Rascunhos criados pelo robô. Nada aparece para o público sem a sua aprovação.</p>
+<div class="resumo-contagem" aria-label="Situação dos alertas">
+  <span>Pendentes: <strong>{{ contagem.get('pendente_revisao', 0) }}</strong></span>
+  <span>Publicados: <strong>{{ contagem.get('publicado', 0) }}</strong></span>
+  <span>Rejeitados: <strong>{{ contagem.get('rejeitado', 0) }}</strong></span>
+</div>
+{% if msg %}<p class="mensagem{% if msg.startswith('Erro') %} erro{% endif %}" role="status">{{ msg }}</p>{% endif %}
+
+{% for a in pendentes %}
+<article class="cartao" aria-labelledby="t-{{ a.id }}">
+  {% if a.precisa_revisar_tema %}
+    <span class="etiqueta aviso">Tema a definir</span>
+  {% else %}
+    <span class="etiqueta">{{ a.tema_rotulo }}</span>
+  {% endif %}
+  <h2 id="t-{{ a.id }}">{{ a.titulo }}</h2>
+  <p class="data">Publicado na fonte em {{ a.data_publicacao or "data não informada" }} · recebido do robô em {{ a.recebido_em[:16].replace('T', ' ') }} UTC</p>
+  <p>{{ a.resumo_simples }}</p>
+  <section class="protecao" aria-label="Como se proteger">
+    <h3>Como se proteger</h3>
+    <ul>{% for d in a.como_se_proteger %}<li>{{ d }}</li>{% endfor %}</ul>
+  </section>
+  <p class="fonte">Fonte: {{ a.fonte_nome }} · <a href="{{ a.link_fonte }}" rel="noopener noreferrer nofollow" target="_blank">conferir na fonte original</a></p>
+
+  <form method="post" action="/revisao/{{ a.id }}">
+    {% if a.precisa_revisar_tema %}
+    <label for="tema-{{ a.id }}">Tema (obrigatório para publicar)</label>
+    <select id="tema-{{ a.id }}" name="tema" required>
+      <option value="">Escolha o tema</option>
+      {% for k, v in temas.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}
+    </select>
+    {% endif %}
+    <div class="acoes">
+      <button class="botao sucesso" name="acao" value="aprovar" type="submit">Aprovar e publicar</button>
+    </div>
+  </form>
+  <form method="post" action="/revisao/{{ a.id }}">
+    <label for="motivo-{{ a.id }}">Motivo, se for rejeitar</label>
+    <textarea id="motivo-{{ a.id }}" name="motivo" rows="2" required
+              placeholder="Ex.: informação não confirmada pela fonte"></textarea>
+    <div class="acoes">
+      <button class="botao perigo" name="acao" value="rejeitar" type="submit">Rejeitar</button>
+    </div>
+  </form>
+</article>
+{% else %}
+<p class="vazio">Nenhum rascunho esperando revisão.</p>
+{% endfor %}
+<a class="botao secundario" href="/alertas">Ver página pública de alertas</a>
+{% endblock %}

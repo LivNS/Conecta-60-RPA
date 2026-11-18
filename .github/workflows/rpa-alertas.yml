@@ -1,0 +1,43 @@
+name: RPA - alertas de golpes
+
+on:
+  schedule:
+    - cron: "17 9 * * *"   # todo dia, 06:17 em Brasília (09:17 UTC)
+  workflow_dispatch: {}      # botão "Run workflow" para demonstração
+
+jobs:
+  executar-robo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rpa
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Restaurar memória de itens já vistos e fila de reenvio
+        uses: actions/cache@v4
+        with:
+          path: rpa/estado
+          key: rpa-estado-${{ github.run_id }}
+          restore-keys: rpa-estado-
+      - run: pip install -r requirements.txt
+      - name: Testes (sucesso, decisão e falha)
+        run: python -m pytest -q
+      - name: Executar robô
+        env:
+          PYTHONPATH: src
+          RPA_API_URL: ${{ secrets.RPA_API_URL }}
+          RPA_API_TOKEN: ${{ secrets.RPA_API_TOKEN }}
+          # com o MVP publicado (segredo RPA_API_URL preenchido) entrega pela API; sem ele, grava arquivo
+          RPA_MODO_ENTREGA: ${{ secrets.RPA_API_URL != '' && 'api' || 'arquivo' }}
+        run: |
+          mkdir -p entrada
+          python -m rpa_alertas --config config/fontes.json
+      - name: Guardar logs como evidência
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-rpa-${{ github.run_number }}
+          path: rpa/logs/

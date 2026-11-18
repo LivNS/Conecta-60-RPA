@@ -1,0 +1,13 @@
+{
+  "_instrucoes": "Preencha os campos abaixo e rode: python docs/relatorio/gerar_relatorio.py. Campos vazios aparecem destacados em amarelo no PDF.",
+  "produto": "Conecta 60+",
+  "turma": "",
+  "integrantes": [
+    {"nome": "", "rm": ""},
+    {"nome": "", "rm": ""},
+    {"nome": "", "rm": ""}
+  ],
+  "link_repositorio": "",
+  "link_video": "",
+  "link_mvp": ""
+}
