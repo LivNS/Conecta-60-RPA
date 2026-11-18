@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Restaurar memória de itens já vistos e fila de reenvio
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: rpa/estado
           key: rpa-estado-${{ github.run_id }}
@@ -35,6 +35,12 @@ jobs:
         run: |
           mkdir -p entrada
           python -m rpa_alertas --config config/fontes.json
+      - name: Salvar memória e fila (também quando a execução sinaliza falha)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: rpa/estado
+          key: rpa-estado-${{ github.run_id }}
       - name: Guardar logs como evidência
         if: always()
         uses: actions/upload-artifact@v4
